@@ -12,18 +12,18 @@
 
   // Using Map instead of plain objects to avoid bracket-notation prototype pollution risks.
   const SUBJECT_COLORS = new Map([
-    ['Matematika',      '#6c5ce7'],
-    ['IPA',             '#00b894'],
-    ['Bahasa Inggris',  '#0984e3'],
-    ['Bahasa Indonesia', '#e17055'],
-    ['IPS',             '#fdcb6e'],
-    ['PKN',             '#00cec9'],
-    ['Seni Budaya',     '#fd79a8'],
-    ['PJOK',            '#55a3e8'],
-    ['Informatika',     '#a29bfe'],
-    ['Prakarya',        '#e84393'],
-    ['PAI',             '#2d3436'],
-    ['Lainnya',         '#636e72'],
+    ['Matematika',      '#ffe44d'],
+    ['IPA',             '#4dffd2'],
+    ['Bahasa Inggris',  '#5b8dfe'],
+    ['Bahasa Indonesia', '#ff6b2b'],
+    ['IPS',             '#ffe44d'],
+    ['PKN',             '#4dffd2'],
+    ['Seni Budaya',     '#ff6eb4'],
+    ['PJOK',            '#5b8dfe'],
+    ['Informatika',     '#a259ff'],
+    ['Prakarya',        '#ff6eb4'],
+    ['PAI',             '#c8c8c8'],
+    ['Lainnya',         '#e0e0e0'],
   ]);
 
   const SUBJECT_ICONS = new Map([
@@ -63,36 +63,37 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
-  const navbar = $('#navbar');
-  const navBrand = $('#navBrand');
-  const btnOpenLogin = $('#btnOpenLogin');
-  const btnAddTask = $('#btnAddTask');
-  const btnLogout = $('#btnLogout');
+  const navbar        = $('#navbar');
+  const navBrand      = $('#navBrand');
+  const btnOpenLogin  = $('#btnOpenLogin');
+  const btnAddTask    = $('#btnAddTask');
+  const btnLogout     = $('#btnLogout');
   const viewDashboard = $('#viewDashboard');
-  const viewAdmin = $('#viewAdmin');
-  const taskGrid = $('#taskGrid');
-  const filterBar = $('#filterBar');
-  const statsBar = $('#statsBar');
-  const statTotal = $('#statTotal');
-  const statUrgent = $('#statUrgent');
-  const statUpcoming = $('#statUpcoming');
+  const viewAdmin     = $('#viewAdmin');
+  const taskGrid      = $('#taskGrid');
+  const filterBar     = $('#filterBar');
+  const statsBar      = $('#statsBar');
+  const statTotal     = $('#statTotal');
+  const statUrgent    = $('#statUrgent');
+  const statUpcoming  = $('#statUpcoming');
 
-  const modalLogin = $('#modalLogin');
-  const formLogin = $('#formLogin');
-  const inputPassword = $('#inputPassword');
-  const loginError = $('#loginError');
-  const btnCloseLogin = $('#btnCloseLogin');
+  const modalLogin       = $('#modalLogin');
+  const formLogin        = $('#formLogin');
+  const inputPassword    = $('#inputPassword');
+  const loginError       = $('#loginError');
+  const btnCloseLogin    = $('#btnCloseLogin');
   const btnTogglePassword = $('#btnTogglePassword');
 
-  const formAddTask = $('#formAddTask');
-  const inputSubject = $('#inputSubject');
-  const inputTitle = $('#inputTitle');
-  const inputDeadline = $('#inputDeadline');
-  const inputDescription = $('#inputDescription');
-  const adminTaskItems = $('#adminTaskItems');
+  const formAddTask        = $('#formAddTask');
+  const inputSubject       = $('#inputSubject');
+  const inputTitle         = $('#inputTitle');
+  const inputDeadline      = $('#inputDeadline');
+  const inputDescription   = $('#inputDescription');
+  const adminTaskItems     = $('#adminTaskItems');
 
-  const toastEl = $('#toastSuccess');
+  const toastEl      = $('#toastSuccess');
   const toastMessage = $('#toastMessage');
+  const toastIcon    = $('#toastIcon');
   const confettiContainer = $('#confettiContainer');
 
   // ── Data Persistence ────────────────────────
@@ -100,7 +101,7 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       tasks = raw ? JSON.parse(raw) : getSeedTasks();
-      if (!raw) saveTasks(); // persist seed data
+      if (!raw) saveTasks();
     } catch {
       tasks = getSeedTasks();
       saveTasks();
@@ -178,19 +179,19 @@
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
     if (diffMs < 0) {
-      return { label: 'Overdue', class: 'overdue', icon: '⚠' };
+      return { label: 'OVERDUE', class: 'overdue', icon: '⚠' };
     } else if (diffHours < 24) {
       const hrs = Math.max(1, Math.ceil(diffHours));
-      return { label: `${hrs}h left`, class: 'urgent', icon: '🔥' };
+      return { label: `${hrs}H LEFT`, class: 'urgent', icon: '🔥' };
     } else if (diffDays <= 3) {
       const d = Math.ceil(diffDays);
-      return { label: `${d} day${d > 1 ? 's' : ''} left`, class: 'urgent', icon: '⏰' };
+      return { label: `${d} DAY${d > 1 ? 'S' : ''} LEFT`, class: 'urgent', icon: '⏰' };
     } else if (diffDays <= 7) {
       const d = Math.ceil(diffDays);
-      return { label: `${d} days left`, class: 'soon', icon: '📅' };
+      return { label: `${d} DAYS LEFT`, class: 'soon', icon: '📅' };
     } else {
       const d = Math.ceil(diffDays);
-      return { label: `${d} days left`, class: 'safe', icon: '✅' };
+      return { label: `${d} DAYS LEFT`, class: 'safe', icon: '✅' };
     }
   }
 
@@ -205,7 +206,6 @@
   }
 
   // ── Safe DOM Helpers ────────────────────────
-  // Creates an element with optional class, attributes, and text content.
   function createElement(tag, options = {}) {
     const el = document.createElement(tag);
     if (options.className) el.className = options.className;
@@ -228,7 +228,6 @@
     return el;
   }
 
-  // Safely clears all children of a DOM element without innerHTML.
   function clearChildren(el) {
     el.replaceChildren();
   }
@@ -266,7 +265,7 @@
 
     function step(now) {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       el.textContent = Math.round(current + (target - current) * eased);
       if (progress < 1) requestAnimationFrame(step);
     }
@@ -283,13 +282,11 @@
       const chip = document.createElement('button');
       chip.className = 'filter-chip' + (activeFilter === sub ? ' active' : '');
       chip.dataset.filter = sub;
-      // Safe: uses textContent so no HTML injection, and getSubjectIcon guards against prototype access
-      chip.textContent = `${getSubjectIcon(sub)} ${sub}`;
+      chip.textContent = `${getSubjectIcon(sub)} ${sub.toUpperCase()}`;
       chip.addEventListener('click', () => setFilter(sub));
       filterBar.appendChild(chip);
     });
 
-    // update "all" chip state
     const allChip = filterBar.querySelector('[data-filter="all"]');
     allChip.className = 'filter-chip' + (activeFilter === 'all' ? ' active' : '');
     allChip.onclick = () => setFilter('all');
@@ -311,16 +308,20 @@
     const article = createElement('article', {
       className: 'task-card',
       style: { '--card-accent': color },
-      attrs: { 'data-id': String(task.id) },
+      attrs: {
+        'data-id': String(task.id),
+        'data-subject': task.subject,
+      },
     });
 
     // Header
     const header = createElement('div', { className: 'task-card__header' });
 
     // Subject badge
-    const subjectBadge = createElement('span', { className: 'task-card__subject' });
-    subjectBadge.appendChild(createElement('span', { className: 'task-card__subject-dot' }));
-    subjectBadge.appendChild(document.createTextNode(` ${icon} ${task.subject}`));
+    const subjectBadge = createElement('span', {
+      className: 'task-card__subject',
+      textContent: `${icon} ${task.subject.toUpperCase()}`,
+    });
 
     // Deadline badge
     const deadlineBadge = createElement('span', {
@@ -357,7 +358,7 @@
     // Delete button (only for logged-in secretary)
     if (isLoggedIn) {
       const deleteBtn = createElement('button', {
-        className: 'task-card__delete btn--icon',
+        className: 'task-card__delete',
         textContent: '🗑',
         attrs: {
           'data-delete': String(task.id),
@@ -371,7 +372,6 @@
       footer.appendChild(deleteBtn);
     }
 
-    // Assemble
     article.appendChild(header);
     article.appendChild(title);
     article.appendChild(desc);
@@ -385,14 +385,11 @@
       ? [...tasks]
       : tasks.filter(t => t.subject === activeFilter);
 
-    // Sort: soonest deadline first, overdue at the top
     filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
-    // Clear previous content safely
     clearChildren(taskGrid);
 
     if (filtered.length === 0) {
-      // Build empty state with safe DOM API
       const emptyState = createElement('div', { className: 'empty-state' });
       emptyState.appendChild(createElement('div', {
         className: 'empty-state__icon',
@@ -400,7 +397,7 @@
       }));
       emptyState.appendChild(createElement('h3', {
         className: 'empty-state__title',
-        textContent: 'No assignments yet',
+        textContent: 'NO ASSIGNMENTS',
       }));
 
       const emptyText = activeFilter === 'all'
@@ -409,14 +406,13 @@
 
       emptyState.appendChild(createElement('p', {
         className: 'empty-state__text',
-        textContent: emptyText, // textContent auto-escapes
+        textContent: emptyText,
       }));
 
       taskGrid.appendChild(emptyState);
       return;
     }
 
-    // Build each card with safe DOM API
     const fragment = document.createDocumentFragment();
     filtered.forEach(task => {
       fragment.appendChild(buildTaskCard(task));
@@ -447,8 +443,8 @@
     }));
 
     const deleteBtn = createElement('button', {
-      className: 'btn btn--danger btn--sm admin-task-item__delete',
-      textContent: '🗑',
+      className: 'admin-task-item__delete',
+      textContent: '🗑 DEL',
       attrs: {
         'data-delete-admin': String(task.id),
         'title': 'Delete',
@@ -465,21 +461,17 @@
   function renderAdminTaskList() {
     const sorted = [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
-    // Clear previous content safely
     clearChildren(adminTaskItems);
 
     if (sorted.length === 0) {
-      const emptyState = createElement('div', {
-        className: 'empty-state',
-        style: { padding: '40px 0' },
-      });
+      const emptyState = createElement('div', { className: 'empty-state' });
       emptyState.appendChild(createElement('div', {
         className: 'empty-state__icon',
         textContent: '📭',
       }));
       emptyState.appendChild(createElement('p', {
         className: 'empty-state__text',
-        textContent: 'No tasks posted yet. Use the form above to add one!',
+        textContent: 'No tasks posted yet. Use the form to add one!',
       }));
       adminTaskItems.appendChild(emptyState);
       return;
@@ -509,12 +501,11 @@
   }
 
   function deleteTask(id) {
-    // Sanitize id to a safe string for the attribute selector
     const safeId = CSS.escape(String(id));
     const card = document.querySelector(`[data-id="${safeId}"]`);
     if (card) {
-      card.style.transition = 'all 300ms var(--ease-out-expo)';
-      card.style.transform = 'scale(0.92)';
+      card.style.transition = 'all 200ms ease';
+      card.style.transform = 'scale(0.9) translate(6px, 6px)';
       card.style.opacity = '0';
     }
     setTimeout(() => {
@@ -523,7 +514,7 @@
       renderDashboard();
       renderAdminTaskList();
       showToast('Assignment deleted.', 'error');
-    }, 280);
+    }, 220);
   }
 
   // ── Authentication ──────────────────────────
@@ -539,7 +530,7 @@
       updateAuthUI();
       closeModal(modalLogin);
       switchView('admin');
-      showToast('Welcome back, Secretary! 👋', 'success');
+      showToast('Welcome, Secretary! 👋', 'success');
       return true;
     }
     return false;
@@ -555,9 +546,9 @@
 
   function updateAuthUI() {
     btnOpenLogin.style.display = isLoggedIn ? 'none' : '';
-    btnAddTask.style.display = isLoggedIn ? '' : 'none';
-    btnLogout.style.display = isLoggedIn ? '' : 'none';
-    renderDashboard(); // re-render to show/hide delete buttons
+    btnAddTask.style.display   = isLoggedIn ? '' : 'none';
+    btnLogout.style.display    = isLoggedIn ? '' : 'none';
+    renderDashboard();
   }
 
   // ── View Switching ──────────────────────────
@@ -579,7 +570,6 @@
   function openModal(modal) {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    // Focus first input
     setTimeout(() => {
       const input = modal.querySelector('input, textarea, select');
       if (input) input.focus();
@@ -589,17 +579,16 @@
   function closeModal(modal) {
     modal.classList.remove('active');
     document.body.style.overflow = '';
-    // Reset form states
     loginError.classList.remove('visible');
     inputPassword.value = '';
   }
 
   // ── Toast ───────────────────────────────────
   function showToast(message, type = 'success') {
-    // Sanitize type against allowlist to prevent class injection
     const safeType = ALLOWED_TOAST_TYPES.has(type) ? type : 'success';
     toastMessage.textContent = message;
-    toastEl.className = `toast toast--${safeType} visible`;
+    toastIcon.textContent = safeType === 'error' ? '✕' : '✓';
+    toastEl.className = `nb-toast nb-toast--${safeType} visible`;
 
     clearTimeout(showToast._timeout);
     showToast._timeout = setTimeout(() => {
@@ -609,30 +598,31 @@
 
   // ── Confetti ────────────────────────────────
   function spawnConfetti() {
-    const colors = ['#6c5ce7', '#00b894', '#fdcb6e', '#e17055', '#fd79a8', '#0984e3', '#a29bfe'];
-    const count = 40;
+    const colors = ['#ffe44d', '#4dffd2', '#ff6eb4', '#ff6b2b', '#5b8dfe', '#a259ff', '#3ddc84'];
+    const count = 50;
 
     for (let i = 0; i < count; i++) {
       const particle = document.createElement('div');
       particle.className = 'confetti-particle';
       particle.style.left = Math.random() * 100 + '%';
       particle.style.top = '-10px';
-      // Safe: numeric index into a hardcoded local array — no user input involved
       const colorIndex = Math.floor(Math.random() * colors.length);
       particle.style.background = colors[colorIndex];
       particle.style.animationDelay = Math.random() * 0.5 + 's';
       particle.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
       particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+      // Random shapes: square, rect, or diamond
+      const shapes = ['0%', '50%', '4px'];
+      particle.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
       confettiContainer.appendChild(particle);
     }
 
     setTimeout(() => {
-      // Safe DOM clearing without innerHTML
       clearChildren(confettiContainer);
     }, 2000);
   }
 
-  // ── Navbar Scroll Effect ────────────────────
+  // ── Navbar scroll effect ────────────────────
   function setupScrollEffect() {
     let ticking = false;
     window.addEventListener('scroll', () => {
@@ -648,29 +638,24 @@
 
   // ── Event Listeners ─────────────────────────
   function bindEvents() {
-    // Nav brand => go back to dashboard
     navBrand.addEventListener('click', (e) => {
       e.preventDefault();
       switchView('dashboard');
     });
 
-    // Open login modal
     btnOpenLogin.addEventListener('click', () => openModal(modalLogin));
 
-    // Close login modal
     btnCloseLogin.addEventListener('click', () => closeModal(modalLogin));
     modalLogin.addEventListener('click', (e) => {
       if (e.target === modalLogin) closeModal(modalLogin);
     });
 
-    // Toggle password visibility
     btnTogglePassword.addEventListener('click', () => {
       const isPassword = inputPassword.type === 'password';
       inputPassword.type = isPassword ? 'text' : 'password';
       btnTogglePassword.textContent = isPassword ? '🙈' : '👁';
     });
 
-    // Login form submit
     formLogin.addEventListener('submit', (e) => {
       e.preventDefault();
       const success = login(inputPassword.value);
@@ -681,13 +666,10 @@
       }
     });
 
-    // Logout
     btnLogout.addEventListener('click', logout);
 
-    // Add task button (nav) => switch to admin
     btnAddTask.addEventListener('click', () => switchView('admin'));
 
-    // Add task form submit
     formAddTask.addEventListener('submit', (e) => {
       e.preventDefault();
       addTask(
@@ -696,16 +678,11 @@
         inputDeadline.value,
         inputDescription.value
       );
-
-      // Reset form
       formAddTask.reset();
-
-      // Success feedback
-      showToast('Assignment posted successfully! 🎉', 'success');
+      showToast('Assignment posted! 🎉', 'success');
       spawnConfetti();
     });
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal(modalLogin);
@@ -730,13 +707,11 @@
     bindEvents();
     setMinDeadline();
 
-    // If logged in, show admin view
     if (isLoggedIn) {
       switchView('admin');
     }
   }
 
-  // Boot
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
