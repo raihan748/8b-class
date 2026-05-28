@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelas 8B — Task Manager</title>
+  <meta name="description" content="Task management dashboard for Kelas 8B. View and manage class assignments with ease." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>" />
+</head>
+<body>
+
+  <!-- Ambient Background Orbs -->
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+  <div class="ambient-orb"></div>
+
+  <!-- ═══ Navbar ═══ -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="navbar__brand" id="navBrand" title="Back to Dashboard">
+      <div class="navbar__icon">8B</div>
+      <div>
+        <div class="navbar__title">Kelas 8B</div>
+        <div class="navbar__subtitle">Task Manager</div>
+      </div>
+    </a>
+    <div class="navbar__actions">
+      <!-- Shown when NOT logged in -->
+      <button class="btn btn--ghost btn--sm" id="btnOpenLogin" title="Secretary Login">
+        🔐 Secretary
+      </button>
+      <!-- Shown when logged in -->
+      <button class="btn btn--ghost btn--sm" id="btnAddTask" style="display:none;" title="Add New Task">
+        ＋ New Task
+      </button>
+      <button class="btn btn--danger btn--sm" id="btnLogout" style="display:none;" title="Logout">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ Public Dashboard View ═══ -->
+  <main class="view active" id="viewDashboard">
+    <div class="container">
+      <header class="page-header">
+        <h1 class="page-header__title">📋 Assignments Board</h1>
+        <p class="page-header__desc">Stay on top of every task, deadline, and project.</p>
+      </header>
+
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-item">
+          <span class="stat-item__value" id="statTotal">0</span>
+          <span class="stat-item__label">Total</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-item__value" id="statUrgent">0</span>
+          <span class="stat-item__label">Urgent</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-item__value" id="statUpcoming">0</span>
+          <span class="stat-item__label">Upcoming</span>
+        </div>
+      </div>
+
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <!-- dynamic subject chips injected here -->
+      </div>
+
+      <section class="task-grid" id="taskGrid">
+        <!-- task cards rendered by JS -->
+      </section>
+    </div>
+  </main>
+
+  <!-- ═══ Secretary Dashboard View ═══ -->
+  <main class="view" id="viewAdmin">
+    <div class="container">
+      <header class="page-header">
+        <h1 class="page-header__title">🛠️ Secretary Dashboard</h1>
+        <p class="page-header__desc">Add, manage, and organize assignments for the class.</p>
+      </header>
+
+      <div class="secretary-panel">
+        <div class="secretary-panel__card">
+          <h2 class="secretary-panel__title">New Assignment</h2>
+          <p class="secretary-panel__desc">Fill in the details below to post a new task.</p>
+
+          <form id="formAddTask" autocomplete="off">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="inputSubject">Subject</label>
+                <select class="form-select" id="inputSubject" required>
+                  <option value="" disabled selected>Choose subject…</option>
+                  <option value="Matematika">Matematika</option>
+                  <option value="IPA">IPA</option>
+                  <option value="Bahasa Inggris">Bahasa Inggris</option>
+                  <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                  <option value="IPS">IPS</option>
+                  <option value="PKN">PKN</option>
+                  <option value="Seni Budaya">Seni Budaya</option>
+                  <option value="PJOK">PJOK</option>
+                  <option value="Informatika">Informatika</option>
+                  <option value="Prakarya">Prakarya</option>
+                  <option value="PAI">PAI</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="inputDeadline">Deadline</label>
+                <input class="form-input" type="datetime-local" id="inputDeadline" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="inputTitle">Task Title</label>
+              <input class="form-input" type="text" id="inputTitle" placeholder="e.g. Latihan Soal Bab 5" required maxlength="120" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="inputDescription">Description</label>
+              <textarea class="form-textarea" id="inputDescription" placeholder="Describe the task, include page numbers, links, or any extra info…" maxlength="500"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--success" style="width:100%; justify-content: center; padding: 14px;">
+              ✓ Post Assignment
+            </button>
+          </form>
+        </div>
+
+        <!-- Existing tasks list (admin) -->
+        <div class="admin-task-list" id="adminTaskList">
+          <div class="admin-task-list__header">
+            <div class="pulse-dot"></div>
+            Active Assignments
+          </div>
+          <div id="adminTaskItems">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══ Login Modal ═══ -->
+  <div class="modal-overlay" id="modalLogin">
+    <div class="modal">
+      <button class="modal__close" id="btnCloseLogin" title="Close">✕</button>
+      <h2 class="modal__title">🔐 Secretary Login</h2>
+      <p class="modal__desc">Enter the class secretary password to manage assignments.</p>
+
+      <form id="formLogin" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="inputPassword">Password</label>
+          <div class="password-wrapper">
+            <input class="form-input" type="password" id="inputPassword" placeholder="Enter password…" required />
+            <button type="button" class="password-toggle" id="btnTogglePassword" title="Show password">👁</button>
+          </div>
+          <div class="form-error" id="loginError">Incorrect password. Please try again.</div>
+        </div>
+        <button type="submit" class="btn btn--primary" style="width:100%; justify-content: center; padding: 14px;">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ Toast ═══ -->
+  <div class="toast toast--success" id="toastSuccess">
+    <span class="toast__icon">✓</span>
+    <span id="toastMessage">Assignment posted successfully!</span>
+  </div>
+
+  <!-- ═══ Confetti Container ═══ -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="footer">
+    Crafted with <span class="footer__heart">♥</span> by <a href="#">Raihan</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
