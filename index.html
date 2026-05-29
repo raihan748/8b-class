@@ -3,60 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kelas 8B — Task Manager</title>
-  <meta name="description" content="Task management dashboard for Kelas 8B. View and manage class assignments with ease." />
+  <title>Kelas 8B Ahmad bin Hambal — Task Board</title>
+  <meta name="description" content="Papan tugas interaktif Kelas 8B Ahmad bin Hambal. Cek PR, deadline, dan pengumuman kelas." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>" />
 </head>
 <body>
 
+  <!-- ═══ Custom Cursor ═══ -->
+  <div id="cursor" aria-hidden="true"></div>
+  <div id="cursorDot" aria-hidden="true"></div>
+
   <!-- ═══ Navbar ═══ -->
   <nav class="navbar" id="navbar">
-    <a href="#" class="navbar__brand" id="navBrand" title="Back to Dashboard">
-      <div class="navbar__badge">8B</div>
-      <div class="navbar__wordmark">
-        <span class="navbar__title">KELAS 8B</span>
-        <span class="navbar__sub">TASK BOARD</span>
+    <div class="navbar__brand" id="navBrand" title="Double-click for Secretary">
+      <div class="navbar__badge" id="logoBadge" title="Double-click for admin">8B</div>
+      <div class="navbar__words">
+        <span class="navbar__name">KELAS 8B</span>
+        <span class="navbar__school">Ahmad bin Hambal</span>
       </div>
-    </a>
+    </div>
     <div class="navbar__actions">
-      <button class="nb-btn nb-btn--ghost" id="btnOpenLogin" title="Secretary Login">
-        🔐 SECRETARY
-      </button>
-      <button class="nb-btn nb-btn--yellow" id="btnAddTask" style="display:none;" title="Add New Task">
-        ＋ NEW TASK
-      </button>
-      <button class="nb-btn nb-btn--red" id="btnLogout" style="display:none;" title="Logout">
-        LOGOUT
-      </button>
+      <button class="mag-btn nb-btn nb-btn--ghost" id="btnOpenLogin" title="Login Sekretaris">🔐 SEKRETARIS</button>
+      <button class="mag-btn nb-btn nb-btn--yellow" id="btnDashboard" style="display:none">📋 BOARD</button>
+      <button class="mag-btn nb-btn nb-btn--mint" id="btnAddTask" style="display:none">＋ TUGAS</button>
+      <button class="mag-btn nb-btn nb-btn--red" id="btnLogout" style="display:none">LOGOUT</button>
     </div>
   </nav>
 
-  <!-- ═══ Public Dashboard View ═══ -->
+  <!-- ═══ Marquee Banner ═══ -->
+  <div class="marquee-wrapper" id="marqueeWrapper">
+    <div class="marquee-track" id="marqueeTrack">
+      <span id="marqueeText1" class="marquee-content"></span>
+      <span id="marqueeText2" class="marquee-content"></span>
+    </div>
+  </div>
+
+  <!-- ═══ Student Dashboard View ═══ -->
   <main class="view active" id="viewDashboard">
     <div class="container">
 
-      <!-- Hero header -->
+      <!-- Hero -->
       <header class="page-hero">
-        <div class="page-hero__tag">📋 ASSIGNMENTS BOARD</div>
-        <h1 class="page-hero__title">WHAT'S<br/>DUE?</h1>
-        <p class="page-hero__sub">Every task. Every deadline. All in one ugly-beautiful place.</p>
+        <div class="page-hero__eyebrow">📋 PAPAN TUGAS</div>
+        <h1 class="page-hero__title">WHAT'S<br/>DUE<span class="page-hero__title--accent">?</span></h1>
+        <p class="page-hero__sub">Setiap tugas. Setiap deadline. Semua di sini.</p>
       </header>
 
       <!-- Stats row -->
       <div class="stats-row" id="statsBar">
-        <div class="stat-box stat-box--blue">
+        <div class="stat-box stat-box--cyan mag-btn">
           <span class="stat-box__num" id="statTotal">0</span>
           <span class="stat-box__label">TOTAL</span>
         </div>
-        <div class="stat-box stat-box--red">
+        <div class="stat-box stat-box--red mag-btn">
           <span class="stat-box__num" id="statUrgent">0</span>
           <span class="stat-box__label">URGENT</span>
         </div>
-        <div class="stat-box stat-box--green">
+        <div class="stat-box stat-box--lime mag-btn">
           <span class="stat-box__num" id="statUpcoming">0</span>
           <span class="stat-box__label">UPCOMING</span>
         </div>
@@ -64,133 +71,164 @@
 
       <!-- Filter bar -->
       <div class="filter-bar" id="filterBar">
-        <button class="filter-chip active" data-filter="all">ALL</button>
-        <!-- dynamic subject chips injected here -->
+        <button class="filter-chip active mag-btn" data-filter="all">SEMUA</button>
       </div>
 
       <!-- Task grid -->
       <section class="task-grid" id="taskGrid">
-        <!-- task cards rendered by JS -->
+        <!-- Cards injected by JS -->
       </section>
+
+      <!-- Energy Meter Widget -->
+      <section class="energy-section">
+        <div class="energy-card">
+          <div class="energy-card__header">
+            ⚡ ENERGY METER KELAS
+            <span class="energy-card__sub">Gimana vibes lo hari ini?</span>
+          </div>
+          <div class="energy-votes" id="energyVotes">
+            <button class="energy-btn mag-btn" data-emoji="🔥" data-label="GASSS">🔥<br/><span>GASSS</span></button>
+            <button class="energy-btn mag-btn" data-emoji="🚀" data-label="FOKUS">🚀<br/><span>FOKUS</span></button>
+            <button class="energy-btn mag-btn" data-emoji="💀" data-label="MATI">💀<br/><span>MATI</span></button>
+            <button class="energy-btn mag-btn" data-emoji="😴" data-label="NGANTUK">😴<br/><span>NGANTUK</span></button>
+          </div>
+          <div class="energy-bars" id="energyBars">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
-  <!-- ═══ Secretary Dashboard View ═══ -->
-  <main class="view" id="viewAdmin">
-    <div class="container">
+  <!-- ═══ Secretary Dashboard (full-screen overlay) ═══ -->
+  <div class="admin-overlay" id="viewAdmin">
+    <div class="admin-overlay__inner">
 
-      <header class="page-hero">
-        <div class="page-hero__tag">🛠️ ADMIN ZONE</div>
-        <h1 class="page-hero__title">SECRETARY<br/>DASHBOARD</h1>
-        <p class="page-hero__sub">Post new assignments and manage the board.</p>
-      </header>
+      <div class="admin-topbar">
+        <div class="admin-topbar__title">🛠️ SEKRETARIS DASHBOARD</div>
+        <div class="admin-topbar__actions">
+          <button class="mag-btn nb-btn nb-btn--yellow" id="btnAdminBack">← BACK TO BOARD</button>
+          <button class="mag-btn nb-btn nb-btn--red" id="btnAdminLogout">LOGOUT</button>
+        </div>
+      </div>
 
-      <div class="admin-layout">
+      <div class="admin-content container">
 
-        <!-- Add Task Form -->
-        <div class="nb-card nb-card--form">
-          <div class="nb-card__header nb-card__header--mint">
-            <span>✏️ NEW ASSIGNMENT</span>
-          </div>
-          <div class="nb-card__body">
-            <form id="formAddTask" autocomplete="off">
-              <div class="form-row-2">
-                <div class="nb-form-group">
-                  <label class="nb-label" for="inputSubject">SUBJECT</label>
-                  <select class="nb-select" id="inputSubject" required>
-                    <option value="" disabled selected>Pick a subject…</option>
-                    <option value="Matematika">📐 Matematika</option>
-                    <option value="IPA">🔬 IPA</option>
-                    <option value="Bahasa Inggris">🌍 Bahasa Inggris</option>
-                    <option value="Bahasa Indonesia">📖 Bahasa Indonesia</option>
-                    <option value="IPS">🗺️ IPS</option>
-                    <option value="PKN">⚖️ PKN</option>
-                    <option value="Seni Budaya">🎨 Seni Budaya</option>
-                    <option value="PJOK">⚽ PJOK</option>
-                    <option value="Informatika">💻 Informatika</option>
-                    <option value="Prakarya">🛠️ Prakarya</option>
-                    <option value="PAI">🕌 PAI</option>
-                    <option value="Lainnya">📌 Lainnya</option>
-                  </select>
+        <!-- Left: Add task form + Marquee editor -->
+        <div class="admin-col">
+
+          <!-- Add Task Form -->
+          <div class="nb-panel">
+            <div class="nb-panel__header nb-panel__header--cyan">✏️ TUGAS BARU</div>
+            <div class="nb-panel__body">
+              <form id="formAddTask" autocomplete="off">
+                <div class="form-row-2">
+                  <div class="nb-form-group">
+                    <label class="nb-label" for="inputSubject">MATA PELAJARAN</label>
+                    <select class="nb-select" id="inputSubject" required>
+                      <option value="" disabled selected>Pilih mapel…</option>
+                      <option value="Matematika">📐 Matematika</option>
+                      <option value="IPA">🔬 IPA</option>
+                      <option value="Bahasa Inggris">🌍 Bahasa Inggris</option>
+                      <option value="Bahasa Indonesia">📖 Bahasa Indonesia</option>
+                      <option value="IPS">🗺️ IPS</option>
+                      <option value="PKN">⚖️ PKN</option>
+                      <option value="Seni Budaya">🎨 Seni Budaya</option>
+                      <option value="PJOK">⚽ PJOK</option>
+                      <option value="Informatika">💻 Informatika</option>
+                      <option value="Prakarya">🛠️ Prakarya</option>
+                      <option value="PAI">🕌 PAI</option>
+                      <option value="Lainnya">📌 Lainnya</option>
+                    </select>
+                  </div>
+                  <div class="nb-form-group">
+                    <label class="nb-label" for="inputDeadline">DEADLINE</label>
+                    <input class="nb-input" type="datetime-local" id="inputDeadline" required />
+                  </div>
                 </div>
                 <div class="nb-form-group">
-                  <label class="nb-label" for="inputDeadline">DEADLINE</label>
-                  <input class="nb-input" type="datetime-local" id="inputDeadline" required />
+                  <label class="nb-label" for="inputTitle">JUDUL TUGAS</label>
+                  <input class="nb-input" type="text" id="inputTitle" placeholder="e.g. Latihan Soal Bab 5" required maxlength="120" />
                 </div>
-              </div>
-
-              <div class="nb-form-group">
-                <label class="nb-label" for="inputTitle">TASK TITLE</label>
-                <input class="nb-input" type="text" id="inputTitle" placeholder="e.g. Latihan Soal Bab 5" required maxlength="120" />
-              </div>
-
-              <div class="nb-form-group">
-                <label class="nb-label" for="inputDescription">DESCRIPTION</label>
-                <textarea class="nb-textarea" id="inputDescription" placeholder="Describe the task, page numbers, links, or any extra info…" maxlength="500"></textarea>
-              </div>
-
-              <button type="submit" class="nb-btn nb-btn--submit">
-                🚀 POST ASSIGNMENT
-              </button>
-            </form>
+                <div class="nb-form-group">
+                  <label class="nb-label" for="inputDescription">DESKRIPSI</label>
+                  <textarea class="nb-textarea" id="inputDescription" placeholder="Detail tugas, halaman, link, dsb…" maxlength="500"></textarea>
+                </div>
+                <button type="submit" class="mag-btn nb-btn nb-btn--submit">
+                  🚀 POST TUGAS
+                </button>
+              </form>
+            </div>
           </div>
+
+          <!-- Marquee Editor -->
+          <div class="nb-panel" style="margin-top: 24px;">
+            <div class="nb-panel__header nb-panel__header--pink">📢 EDIT PENGUMUMAN</div>
+            <div class="nb-panel__body">
+              <div class="nb-form-group">
+                <label class="nb-label" for="inputMarquee">TEKS MARQUEE</label>
+                <textarea class="nb-textarea" id="inputMarquee" placeholder="Tulis pengumuman kelas..." rows="3"></textarea>
+              </div>
+              <button class="mag-btn nb-btn nb-btn--pink" id="btnSaveMarquee">💾 SIMPAN PENGUMUMAN</button>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Active Assignments List (admin) -->
-        <div class="nb-card nb-card--list">
-          <div class="nb-card__header nb-card__header--pink">
-            <span>📌 ACTIVE ASSIGNMENTS</span>
-            <div class="pulse-dot"></div>
-          </div>
-          <div id="adminTaskItems">
-            <!-- rendered by JS -->
+        <!-- Right: Active task list -->
+        <div class="admin-col">
+          <div class="nb-panel">
+            <div class="nb-panel__header nb-panel__header--yellow">
+              <span>📌 TUGAS AKTIF</span>
+              <div class="pulse-dot"></div>
+            </div>
+            <div id="adminTaskItems">
+              <!-- Injected by JS -->
+            </div>
           </div>
         </div>
 
       </div>
     </div>
-  </main>
+  </div>
 
   <!-- ═══ Login Modal ═══ -->
   <div class="modal-overlay" id="modalLogin">
     <div class="nb-modal">
-      <button class="nb-modal__close" id="btnCloseLogin" title="Close">✕</button>
-      <div class="nb-modal__badge">🔐</div>
-      <h2 class="nb-modal__title">SECRETARY<br/>LOGIN</h2>
-      <p class="nb-modal__desc">Enter the class secretary password to manage assignments.</p>
-
+      <button class="nb-modal__close mag-btn" id="btnCloseLogin" title="Close">✕</button>
+      <div class="nb-modal__stamp">🔐</div>
+      <h2 class="nb-modal__title">SEKRETARIS<br/>LOGIN</h2>
+      <p class="nb-modal__desc">Masukkan password sekretaris kelas untuk akses dashboard.</p>
       <form id="formLogin" autocomplete="off">
         <div class="nb-form-group">
           <label class="nb-label" for="inputPassword">PASSWORD</label>
           <div class="password-wrapper">
-            <input class="nb-input" type="password" id="inputPassword" placeholder="Enter password…" required />
-            <button type="button" class="password-toggle" id="btnTogglePassword" title="Show password">👁</button>
+            <input class="nb-input" type="password" id="inputPassword" placeholder="Masukkan password…" required />
+            <button type="button" class="mag-btn password-toggle" id="btnTogglePassword" title="Tampilkan">👁</button>
           </div>
-          <div class="nb-form-error" id="loginError">❌ Wrong password. Try again.</div>
+          <div class="nb-form-error" id="loginError">❌ Password salah. Coba lagi.</div>
         </div>
-        <button type="submit" class="nb-btn nb-btn--submit">
-          SIGN IN →
-        </button>
+        <button type="submit" class="mag-btn nb-btn nb-btn--submit">MASUK →</button>
       </form>
     </div>
   </div>
 
   <!-- ═══ Toast ═══ -->
-  <div class="nb-toast" id="toastSuccess">
-    <span class="nb-toast__icon" id="toastIcon">✓</span>
-    <span id="toastMessage">Done!</span>
+  <div class="nb-toast" id="toast">
+    <span id="toastIcon">✓</span>
+    <span id="toastMessage"></span>
   </div>
-
-  <!-- ═══ Confetti Container ═══ -->
-  <div class="confetti-container" id="confettiContainer"></div>
 
   <!-- ═══ Footer ═══ -->
   <footer class="nb-footer">
-    <div class="nb-footer__inner">
+    <div class="nb-footer__box">
       Crafted with <span class="nb-footer__heart">♥</span> by <strong>Raihan</strong>
     </div>
   </footer>
 
+  <!-- canvas-confetti via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
